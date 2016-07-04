@@ -18,6 +18,8 @@ namespace SnakeOffline
         private static GameController current;
 
         public MenuSystem menuSystem;
+		public MapGenerator mapGenerator;
+
 
         private MenuScreen startMenu;
         private MenuScreen restartMenu;
@@ -70,6 +72,7 @@ namespace SnakeOffline
             menuSystem.HUD.Show();
             state = GameState.Playing;
             Game.SoundManager.PlayMusic("GameLoop");
+			mapGenerator.GeneratorMap ();
             ScreenFaderFadeOut(0.4f);
         }
 
