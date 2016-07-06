@@ -8,17 +8,31 @@ namespace SnakeOffline
         public SpriteRenderer mBodyCover;
         public SpriteRenderer mShadow;
 
+        int mDepth;
+
+        int mBodyDepth;
+        int mBodyCoverDepth;
+        int mShadowDepth;
 
         // Use this for initialization
         void Start()
         {
-
+            mBodyDepth = mBody.sortingOrder;
+            mBodyCoverDepth = mBodyCover.sortingOrder;
+            mShadowDepth = mShadow.sortingOrder;
         }
 
-        // Update is called once per frame
-        void Update()
+        public void InitBody(int depth)
         {
+            mDepth = depth;
+            SetOrder();
+        }
 
+        void SetOrder()
+        {
+            mBodyCover.sortingOrder = mBodyCoverDepth - mDepth * 4;
+            mBody.sortingOrder = mBodyDepth - mDepth * 4;
+            mShadow.sortingOrder = mShadowDepth - mDepth * 4;
         }
     }
 }

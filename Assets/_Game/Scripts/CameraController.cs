@@ -20,7 +20,7 @@ namespace SnakeOffline
             {
                 Vector3 pos = followObject.transform.position;
                 pos.z = -10;
-                transform.position = pos;
+                transform.position = pos ;// Vector3.Lerp(transform.position, pos,Time.deltaTime*2);
             }
         }
         

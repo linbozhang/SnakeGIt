@@ -9,11 +9,11 @@ namespace SnakeOffline
         public GameObject pv;
     }
 
-    public class Path
+    public class Path:MonoBehaviour
     {
         private static bool debug;
         public PathPoint head;
-        private const float minPointDistance = 5f;
+        private const float minPointDistance = 0.01f;
         private const float sqrMinPointDis = minPointDistance * minPointDistance;
         public SnakeController player;
         public GameObject pointVisual;
@@ -29,7 +29,7 @@ namespace SnakeOffline
             }
             this.tempPoint = new PathPoint();
             this.tempPoint.position = pos;
-            if(this.head!=null)
+            if(this.head==null)
             {
                 this.head = this.tempPoint;
             }

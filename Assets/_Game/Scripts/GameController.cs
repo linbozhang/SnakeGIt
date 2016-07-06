@@ -71,6 +71,8 @@ namespace SnakeOffline
             menuSystem.CurrentScreen.Hide(0.5f);
             menuSystem.HUD.Show();
             state = GameState.Playing;
+
+            CreatePlayer();
             Game.SoundManager.PlayMusic("GameLoop");
 			mapGenerator.GeneratorMap ();
             ScreenFaderFadeOut(0.4f);
@@ -80,6 +82,17 @@ namespace SnakeOffline
         {
 
         }
+
+
+
+        void CreatePlayer()
+        {
+            Vector2 pos = ((Random.insideUnitCircle.normalized + Vector2.one) * GameConfig.MapRadius);
+            GameObject playerGo = PoolManager.current.poolSnake(pos);
+            playerGo.GetComponent<SnakeController>().isPlayer = true;
+        }
+
+
 
         private void ScreenFaderFadeIn(float time,Callback onCompleteCB=null)
         {

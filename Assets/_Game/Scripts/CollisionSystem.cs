@@ -4,8 +4,8 @@ namespace SnakeOffline
 {
 	public class CollisionSystem : MonoBehaviour {
 
-		public int Resolution=10000;
-		private byte [,] board=new byte[Resolution,Resolution];
+		public const int resolution=10000;
+		private byte [,] board=new byte[resolution,resolution];
 		public static CollisionSystem current;
 		void Awake()
 		{
@@ -14,14 +14,14 @@ namespace SnakeOffline
 
 		bool castCheck(int i,int j,byte id)
 		{
-			if (((i >= 0) && (j >= 0)) && (((i < Resolution) && (j < Resolution)) && (this.board [i, j] == id))) {
+			if (((i >= 0) && (j >= 0)) && (((i < resolution) && (j < resolution)) && (this.board [i, j] == id))) {
 				return false;
 			}
 			return true;
 		}
 		void deletePoint(int i,int j,byte id)
 		{
-			if (((i >= 0) && (j >= 0)) && (((i < Resolution) && (j < Resolution)) && (this.board [i, j] == id))) {
+			if (((i >= 0) && (j >= 0)) && (((i < resolution) && (j < resolution)) && (this.board [i, j] == id))) {
 				this.board [i, j] = 0;
 			}
 		}
@@ -33,7 +33,7 @@ namespace SnakeOffline
 
 		byte hitPointCheck(int i,int j,byte id)
 		{
-			if (((i < 0) || (j < 0)) || ((i >= Resolution) || (j >= Resolution))) {
+			if (((i < 0) || (j < 0)) || ((i >= resolution) || (j >= resolution))) {
 				return 1;
 			}
 			if ((this.board [i, j] != 0) && (this.board [i, j] != id)) {

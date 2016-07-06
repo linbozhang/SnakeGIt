@@ -6,6 +6,9 @@ namespace SnakeOffline
     public class PoolManager : MonoBehaviour
     {
         public static PoolManager current;
+
+        public GameObject snakePrefab;
+
         public GameObject bodyPartPrefab;
         public GameObject foodPartPrefab;
 
@@ -13,6 +16,11 @@ namespace SnakeOffline
 
         List<byte> usedIDs = new List<byte>();
         
+        void Awake()
+        {
+            current = this;
+        }
+
         public byte GetPlayerID()
         {
             byte id =(byte) Random.Range(1,256);
@@ -31,6 +39,13 @@ namespace SnakeOffline
             GameObject go=Instantiate<GameObject>(bodyPartPrefab);
             bodyParts.Add(go);
             go.SetActive(false);
+            return go;
+        }
+
+        public GameObject poolSnake(Vector2 pos)
+        {
+            GameObject go = Instantiate<GameObject>(snakePrefab);
+            bodyParts.Add(go);
             return go;
         }
 
