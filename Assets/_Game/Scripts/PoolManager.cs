@@ -38,6 +38,7 @@ namespace SnakeOffline
         {
             GameObject go=Instantiate<GameObject>(bodyPartPrefab);
             bodyParts.Add(go);
+			go.transform.position = pos;
             go.SetActive(false);
             return go;
         }
@@ -45,6 +46,7 @@ namespace SnakeOffline
         public GameObject poolSnake(Vector2 pos)
         {
             GameObject go = Instantiate<GameObject>(snakePrefab);
+			go.transform.position = pos;
             bodyParts.Add(go);
             return go;
         }

@@ -44,7 +44,7 @@ namespace SnakeOffline
             this.currentPath.player = this;
             this.tempDirection = this._direction = Random.insideUnitCircle.normalized;
             this.playerID = PoolManager.current.GetPlayerID();
-            vector = getRandomSnakePos();
+			vector = this.transform.position;
             this.transform.position = vector;
             this.length = GameConfig.snakeInitLength;
             if (this.isPlayer)
@@ -70,10 +70,24 @@ namespace SnakeOffline
         // Update is called once per frame
         void FixedUpdate()
         {
-            //Vector2 vector = this._direction + (this.tempDirection * Time.deltaTime * 10);
+
+			//float deltaAngle = Vector2.Angle (this._direction, this.tempDirection);
+			float realDeltaAngle = Quaternion.FromToRotation (this._direction,this.tempDirection).eulerAngles.z;
+			float deltaAngle = realDeltaAngle > 180 ? (360 - realDeltaAngle) : realDeltaAngle;
+			float rotateSpeed = 1.8f;
+			if (deltaAngle > Time.fixedDeltaTime*180*rotateSpeed) {
+				float tempAngle = Mathf.Atan2 (this._direction.y, this._direction.x);
+				tempAngle = tempAngle + ((realDeltaAngle > 180 ? -1 : 1) * Time.fixedDeltaTime * Mathf.PI*rotateSpeed);
+				//Debug.Log ("z"+realDeltaAngle+"a"+deltaAngle+"t"+ tempAngle);
+				this._direction = new Vector2 (Mathf.Cos (tempAngle), Mathf.Sin (tempAngle));
+				//this._direction = (this._direction + (this.tempDirection * Time.deltaTime * 10)).normalized;	
+			} else {
+				this._direction = this.tempDirection.normalized;
+			}
+            //Vector2 vector = this._direction + (this.tempDirection * Time.deltaTime * 8);
             //this._direction = vector.normalized;
             this.size = 1f + (this.length / 1000f);
-            transform.position +=  (Vector3) this.direction*Time.deltaTime * 4;
+            transform.position +=  (Vector3) this.direction*Time.deltaTime * 50;
 
             float angle = Mathf.Atan2(this.direction.y, this.direction.x);
             this.transform.localEulerAngles = new Vector3(0, 0, angle / Mathf.PI * 180);
@@ -87,7 +101,7 @@ namespace SnakeOffline
 
         void repositionBodyParts()
         {
-            float interval = GameConfig.SnakeBodyInterval*this.size;
+			float interval = GameConfig.SnakeBodyInterval*this.size;
             PathPoint toDelete = this.getHead();
             Vector2 zero = Vector2.zero;
             int count = this.bodyList.Count;
@@ -173,7 +187,7 @@ namespace SnakeOffline
         }
         Vector2 getRandomSnakePos()
         {
-            return (Random.insideUnitCircle.normalized * GameConfig.MapRadius) + (Vector2.one * GameConfig.MapRadius);
+			return new Vector2 (Random.Range(12.8f,GameConfig.MapRadius-12.8f),Random.Range(12.8f,GameConfig.MapRadius-12.8f) );
         }
     }
 }

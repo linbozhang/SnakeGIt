@@ -6,8 +6,8 @@ namespace SnakeOffline
 		public Transform mapHolder;
 		public Sprite mapTail;
 
-		const float mapSizeX=6.60f;
-		const float mapSizeY=5.87f;
+		const float mapSizeX=66.0f;
+		const float mapSizeY=58.7f;  
 
 
 		private bool hasGenerated = false;

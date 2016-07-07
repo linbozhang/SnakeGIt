@@ -15,7 +15,9 @@ namespace SnakeOffline
             Dead
         }
 
-        private static GameController current;
+        public static GameController current;
+
+		public SnakeController player;
 
         public MenuSystem menuSystem;
 		public MapGenerator mapGenerator;
@@ -72,7 +74,11 @@ namespace SnakeOffline
             menuSystem.HUD.Show();
             state = GameState.Playing;
 
-            CreatePlayer();
+			for (int i = 0; i < 50; i++) {
+				//CreatePlayer (false);
+			}
+
+            CreatePlayer(true);
             Game.SoundManager.PlayMusic("GameLoop");
 			mapGenerator.GeneratorMap ();
             ScreenFaderFadeOut(0.4f);
@@ -83,13 +89,27 @@ namespace SnakeOffline
 
         }
 
+		public Vector2 playerDirection
+		{
+			set {
+				if (player != null) {
+					player.direction = value;
+				}
+			}
+		}
+		
+		
 
-
-        void CreatePlayer()
+		void CreatePlayer(bool isPlayer)
         {
-            Vector2 pos = ((Random.insideUnitCircle.normalized + Vector2.one) * GameConfig.MapRadius);
+			Vector2 pos = new Vector2 (Random.Range (12.8f, GameConfig.MapRadius - 12.8f), Random.Range (12.8f, GameConfig.MapRadius - 12.8f));
             GameObject playerGo = PoolManager.current.poolSnake(pos);
-            playerGo.GetComponent<SnakeController>().isPlayer = true;
+            playerGo.GetComponent<SnakeController>().isPlayer = isPlayer;
+			if (isPlayer) {
+				player = playerGo.GetComponent<SnakeController> ();
+			} else {
+				playerGo.AddComponent<SnakeAIController> ();
+			}
         }
 
 

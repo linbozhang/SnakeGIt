@@ -6,18 +6,18 @@ namespace SnakeOffline
     {
         public static Vector2 AnchorPos = Vector2.zero; //the anchor of map ,bottom-left
 
-        public const float MapRadius = 100;     //the radius of map
+        public const float MapRadius = 1000;     //the radius of map
         public const float HalfMapRadisu = MapRadius / 2;
 
         public const float FoodRectSize= 0.1f;
         
 
 
-        public const float SnakeBodyInterval = 0.09f*1.2f;
+        public const float SnakeBodyInterval = 1f;
         public const float SnakeBodySize = 0.61f;    //the size of Image for SnakeBody in pixel is 61*61
         public const float SnakeBaseScale = 0.8f;   //the initScale of Snake is (0.4f,0.4f,0.4f)
 
-        public const int snakeInitLength = 70;
+        public const int snakeInitLength = 700;
 
 
         
