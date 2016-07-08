@@ -49,6 +49,37 @@ namespace SnakeOffline
             }
         }
 
+
+
+        public void EatCheck(SnakeController eater)
+        {
+            Vector2 headPos = eater.transform.position;
+            int x = Mathf.RoundToInt(headPos.x);
+            int y = Mathf.RoundToInt(headPos.y);
+            int tempX = x;
+            int tempY = y;
+            int eatArround = 5;
+            for(int i=-eatArround;i<=eatArround;i++)
+            {
+                for(int j=-eatArround;j<=eatArround;j++)
+                {
+                    tempX = x + i;
+                    tempY = y + j;
+                    if(tempX >= 0&& tempY >= 0&& tempX < foodC&& tempY < foodC)
+                    {
+                        if(foods[tempX, tempY]!=null)
+                        {
+                            foods[tempX, tempY].SetActive(false);
+                            foods[tempX, tempY] = null;
+                            foodsCount[tempX / areaSize, tempY / areaSize]--;
+                        }
+                    }
+                }
+            }
+
+        }
+
+
         public void ResetFood()
         {
             for(int i=0;i<foods.GetLength(0);i++)
@@ -82,9 +113,20 @@ namespace SnakeOffline
 
 
 
-        public byte getRandomFoodType()
+        public FoodType getRandomFoodType()
         {
-            return (byte)Random.Range(1, 4);
+            float value = Random.value;
+            if(value<GameConfig.lowFoodPro)
+            {
+                return FoodType.Low;
+            }else if(value>=GameConfig.lowFoodPro&&value<(GameConfig.lowFoodPro+GameConfig.middleFoodPro))
+            {
+                return FoodType.Middle;
+            }else if(value>= (GameConfig.lowFoodPro + GameConfig.middleFoodPro)&&value<1)
+            {
+                return FoodType.High;
+            }
+            return FoodType.Low;
         }
     }
 }

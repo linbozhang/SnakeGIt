@@ -5,7 +5,7 @@ namespace SnakeOffline
     public class CameraController : MonoBehaviour
     {
         public static CameraController current;
-		Camera mCamera;
+		public Camera mCamera;
 		float startSize;
         void Awake()
         {
@@ -20,13 +20,13 @@ namespace SnakeOffline
         public SnakeController followObject;
         
 
-        void Update()
+        void LateUpdate()
         {
             if(followObject!=null)
             {
                 Vector3 pos = followObject.transform.position;
                 pos.z = -10;
-                transform.position =Vector3.Lerp(transform.position, pos,Time.deltaTime*2);
+                transform.position =Vector3.Lerp(transform.position, pos,Time.deltaTime*3);
 				mCamera.orthographicSize= startSize*(1+(followObject.length/2000f));   //Mathf.Lerp(mCamera.orthographicSize,startSize*(followObject.length/1000+1),Time.deltaTime*2);
             }
         }

@@ -13,7 +13,7 @@ namespace SnakeOffline
     {
         private static bool debug;
         public PathPoint head;
-        private const float minPointDistance = 1.5f;
+        private const float minPointDistance =1.5f;
         private const float sqrMinPointDis = minPointDistance * minPointDistance;
         public SnakeController player;
         public GameObject pointVisual;

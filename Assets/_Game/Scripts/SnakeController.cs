@@ -29,7 +29,9 @@ namespace SnakeOffline
         private Vector2 tempDirection = Vector2.right;
         private Vector2 velocity = Vector2.zero;
 
-
+        private SnakeSkin skinData;
+        private Color[] snakeBodyColors=new Color[4];
+        private string[] snakeBodyPictures=new string[3];
 
         void Awake()
         {
@@ -37,37 +39,91 @@ namespace SnakeOffline
         }
 
 
-        // Use this for initialization
-        void Start()
+        public void InitSnake(int skinId,Vector2 _dir,byte _playerId,int _length,bool _isPlayer)
         {
             Vector2 vector;
             this.currentPath.player = this;
-            this.tempDirection = this._direction = Random.insideUnitCircle.normalized;
-            this.playerID = PoolManager.current.GetPlayerID();
-			vector = this.transform.position;
-            this.transform.position = vector;
-            this.length = GameConfig.snakeInitLength;
+            this.tempDirection = this._direction =  _dir;// Random.insideUnitCircle.normalized;
+            this.playerID = _playerId;
+            this.isPlayer = _isPlayer;
+            vector = this.transform.position;
+            this.length = _length;
+            skinData = DataCache.skinMap[skinId];
+            string scolor = "17";
+            for (int i = 0; i < 3; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        scolor = skinData.color_one;
+                        break;
+                    case 1:
+                        scolor = skinData.color_two;
+                        break;
+                    case 2:
+                        scolor = skinData.color_three;
+                        break;
+                }
+                if (string.IsNullOrEmpty(scolor))
+                {
+                    snakeBodyColors[i] = Color.white;
+                }
+                else
+                {
+                    snakeBodyColors[i] = ColorPool.current.getBodyColorWithIndex(System.Int32.Parse(scolor));
+                }
+            }
+            scolor = skinData.first_color;
+            snakeBodyColors[3] = ColorPool.current.getBodyColorWithIndex(System.Int32.Parse(scolor));
+
+
+            for (int i = 0; i < 3; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        snakeBodyPictures[0] = skinData.picture_one;
+                        break;
+                    case 1:
+                        snakeBodyPictures[1] = skinData.picture_two;
+                        break;
+                    case 2:
+                        snakeBodyPictures[2] = skinData.picture_three;
+                        break;
+                }
+            }
+
             if (this.isPlayer)
             {
                 CameraController.current.followObject = this;
-            }else
-            {
-                this.length = GameConfig.snakeInitLength*Random.Range(1,5);    
             }
+           
+
+
+
+
             int bodyCount = this.length / 10;
-            for(int i=0;i<bodyCount;i++)
+            for (int i = 0; i < bodyCount; i++)
             {
-                GameObject tempBody = PoolManager.current.spawnBodyPart(vector);
-                tempBody.GetComponent<SnakeBody>().InitBody(bodyList.Count);
+                GameObject tempBody = ClientAddSnakeBody(i,vector);   //PoolManager.current.spawnBodyPart(vector);
+                //tempBody.GetComponent<SnakeBody>().InitBody(bodyList.Count);
                 this.bodyList.Add(tempBody);
                 this.currentPath.addPointToHead(tempBody.transform.position);
             }
-            
+            if(!isPlayer)
+            {
+                gameObject.AddComponent<SnakeAIController>();
+            }
+        }
 
-
+        // Use this for initialization
+        void Start()
+        {
+          
         }
 
         // Update is called once per frame
+        long count = 0;
         void Update()
         {
 
@@ -84,6 +140,13 @@ namespace SnakeOffline
             //} else {
             //	this._direction = this.tempDirection.normalized;
             //}
+
+            count++;
+            if(count%50==0)
+            {
+                Debug.Log(Time.realtimeSinceStartup);
+            }
+           
             Vector2 vector = this._direction + (this.tempDirection * Time.deltaTime * 10);
             this._direction = vector.normalized;
             this.size = 1f + (this.length / 1000f);
@@ -96,11 +159,15 @@ namespace SnakeOffline
             this.lastPosition = this.bodyList[0].transform.position;
             this.currentPath.addPointToHead(this.bodyList[0].transform.position);
             this.repositionBodyParts();
-
+            if (count % 50 == 0)
+            {
+                Debug.Log(Time.realtimeSinceStartup);
+            }
         }
-
+        int aCount = 0;
         void repositionBodyParts()
         {
+            aCount = 0;
 			float interval = GameConfig.SnakeBodyInterval*this.size;
             PathPoint toDelete = this.getHead();
             Vector2 zero = Vector2.zero;
@@ -115,15 +182,16 @@ namespace SnakeOffline
                 if(i==0)
                 {
                     //this.bodyList[i].transform.position += (Vector3)this._direction * Time.deltaTime * 3;//.Translate(this._direction*Time.deltaTime*3);
-
                 }else
                 {
+                    
                     float num4 = interval;
                     Vector2 vector2 = toDelete.position - zero;
                     while(vector2.sqrMagnitude<(num4*num4))
                     {
                         flag2 = true;
                         num4 -= vector2.magnitude;
+                        aCount++;
                         this.bodyList[i].transform.position = toDelete.position;
                         if(toDelete.nextPoint!=null)
                         {
@@ -166,8 +234,18 @@ namespace SnakeOffline
                
 
                 zero = this.bodyList[i].transform.position;
-            }
 
+                //Vector2 viewPos = CameraController.current.mCamera.WorldToViewportPoint(bodyList[i].transform.position);
+                var snakeBody = bodyList[i].GetComponent<SnakeBody>();
+                //if (viewPos.x < -0.1f || viewPos.x > 1.1f || viewPos.y < -0.1f || viewPos.y > 1.1f)
+                //{
+                //    snakeBody.Disappear();
+                //}
+                //else
+                //{
+                //    snakeBody.Appear();
+                //}
+            }          
         }
         public PathPoint getHead()
         {
@@ -189,6 +267,57 @@ namespace SnakeOffline
         {
 			return new Vector2 (Random.Range(12.8f,GameConfig.MapRadius-12.8f),Random.Range(12.8f,GameConfig.MapRadius-12.8f) );
         }
+
+
+        GameObject ClientAddSnakeBody(int depth, Vector2 pos)
+        {
+            GameObject prefab;
+
+            //GameObject tempheadPrefab = headPrefab;
+            //GameObject tempbodyPrefab = bodyPrefab;
+
+
+            bool isSampleBody = true;
+            if (!string.IsNullOrEmpty(skinData.picture_Body))
+            {
+                isSampleBody = false;
+               // tempbodyPrefab = DataCache.loadPrefab("Skin/" + skinData.picture_Body);
+            }
+            
+
+
+            Color color = Color.white;
+            int index = depth % skinData.loopType.Length;
+            int bodyIndex = skinData.loopType[index];
+
+            if (!string.IsNullOrEmpty(snakeBodyPictures[bodyIndex - 1]))
+            {
+                isSampleBody = false;
+              //  tempbodyPrefab = DataCache.loadPrefab("Skin/" + snakeBodyPictures[bodyIndex - 1]);
+            }
+            else
+            {
+                color = snakeBodyColors[bodyIndex - 1];
+            }
+
+            GameObject snake = PoolManager.current.spawnBodyPart(pos);
+
+            //snake.transform.SetParent(snakeBodyHandler.transform);
+            //SetOrder(snake, depth);
+            float a = (depth % (skinData.shadow_interval * 2) * 1.0f / skinData.shadow_interval);
+
+            if (a > 1)
+            {
+                a = 2 - a;
+            }
+            a *= 0.8f;
+            color.a = a;
+
+            snake.transform.localScale = new Vector3(size, size, 1);
+            snake.GetComponent<SnakeBody>().Init(depth, Vector2.zero, color, "", isSampleBody, isPlayer);
+            return snake.gameObject;
+        }
+
     }
 }
 

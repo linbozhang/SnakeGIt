@@ -30,7 +30,7 @@ namespace SnakeOffline
         private DeerCat.SimpleTween.Tween fadeTween;
 
         private GameState state;
-        private List<SnakeController> players;
+        private List<SnakeController> players=new List<SnakeController>();
 
         public static MenuSystem MenuSystem
         {
@@ -52,10 +52,19 @@ namespace SnakeOffline
         // Use this for initialization
         void Start()
         {
+
+
+
             menuSystem = GameObject.FindObjectOfType<MenuSystem>();
             startMenu = menuSystem.getScreen("StartMenu");
             restartMenu = menuSystem.getScreen("RestartMenu");
             screenFade = GameObject.Find("ScreenFade").GetComponent<CanvasGroup>();
+            GetComponent<LoadResource>().LoadRes(OnResLoadOver);
+            //OnEnterStateMenu();
+        }
+
+        void OnResLoadOver()
+        {
             OnEnterStateMenu();
         }
 
@@ -77,9 +86,9 @@ namespace SnakeOffline
             menuSystem.HUD.Show();
             state = GameState.Playing;
 
-			for (int i = 0; i < 50; i++) {
-				//CreatePlayer (false);
-			}
+			//for (int i = 0; i < 50; i++) {
+			//	CreatePlayer (false);
+			//}
 
             CreatePlayer(true);
             Game.SoundManager.PlayMusic("GameLoop");
@@ -105,6 +114,7 @@ namespace SnakeOffline
 		{
 			set {
 				if (player != null) {
+                   // Debug.Log("setDir:"+value);
 					player.direction = value;
 				}
 			}
@@ -116,11 +126,17 @@ namespace SnakeOffline
         {
 			Vector2 pos = new Vector2 (Random.Range (12.8f, GameConfig.MapRadius - 12.8f), Random.Range (12.8f, GameConfig.MapRadius - 12.8f));
             GameObject playerGo = PoolManager.current.poolSnake(pos);
-            playerGo.GetComponent<SnakeController>().isPlayer = isPlayer;
+            SnakeController snake = playerGo.GetComponent<SnakeController>();
+            snake.InitSnake(GameConfig.getRandomNormalSkinID(),
+                Random.insideUnitCircle.normalized,
+                PoolManager.current.GetPlayerID(),
+                GameConfig.snakeInitLength*3500,
+                isPlayer);
+            //playerGo.GetComponent<SnakeController>().isPlayer = isPlayer;
+            players.Add(snake);
+
 			if (isPlayer) {
 				player = playerGo.GetComponent<SnakeController> ();
-			} else {
-				playerGo.AddComponent<SnakeAIController> ();
 			}
         }
 
@@ -165,6 +181,22 @@ namespace SnakeOffline
         // Update is called once per frame
         void Update()
         {
+            if(state==GameState.Playing)
+            {
+                EatfoodCheck();
+            }
+        }
+
+        void EatfoodCheck()
+        {
+            //Debug.Log("eatCheck");
+            for(int i=0;i<players.Count;i++)
+            {
+
+                SnakeController eater = players[i];
+                foodControl.EatCheck(eater);
+
+            }
 
         }
 

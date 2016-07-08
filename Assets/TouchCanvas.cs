@@ -13,10 +13,19 @@ namespace Game.UI
 
 		Vector2 centerPos;
 		Camera mCamera;
-		void Start()
+        const float screenWidth = 800;
+        const float screenHeight = 600;
+        float scaleX = Screen.width / screenWidth;
+        float scaleY = Screen.height / screenHeight;
+        Rect parentRect;
+
+
+        void Start()
 		{
 			mCamera = GameObject.FindGameObjectWithTag ("UICamera").GetComponent<Camera> ();
-			#if UNITY_ANDROID||UNITY_IOS
+            parentRect = GetComponent<RectTransform>().rect;
+            //Debug.Log(parentRect);
+            #if UNITY_ANDROID||UNITY_IOS
 				
 			#else
 			centerPos=mCamera.ViewportToScreenPoint(Vector2.one*0.5f);
@@ -35,19 +44,29 @@ namespace Game.UI
 		}
 		void OnMove(Vector2 pos)
 		{
-			Vector2 dir = pos - centerPos;
+
+           // Debug.Log("mousePos:"+pos);
+
+            pos.x = pos.x / Screen.width * parentRect.width + parentRect.x;
+            pos.y = pos.y / Screen.height * parentRect.height + parentRect.y;
+           // Debug.Log("aftmousePos:" + pos);
+            Vector2 dir = pos - Vector2.zero;
 			dir = dir.normalized;
 			GameController.current.playerDirection = dir;
 		}
 		void Update()
 		{
-			#if UNITY_ANDROID||UNITY_IOS
-			#else
+            if(GameController.current.player)
+            {
+#if UNITY_ANDROID || UNITY_IOS
+#else
 
-			Vector2 pos= Input.mousePosition;	
-			OnMove(pos);
-			#endif
-		}
+                Vector2 pos = Input.mousePosition;
+                OnMove(pos);
+#endif
+            }
+
+        }
 
     }
 }

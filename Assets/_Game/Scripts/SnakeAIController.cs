@@ -12,6 +12,8 @@ namespace SnakeOffline
 
 			private void escapeCheck()
 			{
+            if (this.player.bodyList[0] == null)
+                return;
 				int maxDistance = 0x4b;
 				int num2 = CollisionSystem.current.rayCast(this.player.bodyList[0].transform.position, this.player.direction, this.player.playerID, maxDistance);
 				int num3 = CollisionSystem.current.rayCast(this.player.bodyList[0].transform.position, (Vector2) (Quaternion.AngleAxis(-20f, Vector3.forward) * this.player.direction), this.player.playerID, maxDistance);
