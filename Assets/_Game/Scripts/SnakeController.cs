@@ -68,24 +68,24 @@ namespace SnakeOffline
         }
 
         // Update is called once per frame
-        void FixedUpdate()
+        void Update()
         {
 
-			//float deltaAngle = Vector2.Angle (this._direction, this.tempDirection);
-			float realDeltaAngle = Quaternion.FromToRotation (this._direction,this.tempDirection).eulerAngles.z;
-			float deltaAngle = realDeltaAngle > 180 ? (360 - realDeltaAngle) : realDeltaAngle;
-			float rotateSpeed = 1.8f;
-			if (deltaAngle > Time.fixedDeltaTime*180*rotateSpeed) {
-				float tempAngle = Mathf.Atan2 (this._direction.y, this._direction.x);
-				tempAngle = tempAngle + ((realDeltaAngle > 180 ? -1 : 1) * Time.fixedDeltaTime * Mathf.PI*rotateSpeed);
-				//Debug.Log ("z"+realDeltaAngle+"a"+deltaAngle+"t"+ tempAngle);
-				this._direction = new Vector2 (Mathf.Cos (tempAngle), Mathf.Sin (tempAngle));
-				//this._direction = (this._direction + (this.tempDirection * Time.deltaTime * 10)).normalized;	
-			} else {
-				this._direction = this.tempDirection.normalized;
-			}
-            //Vector2 vector = this._direction + (this.tempDirection * Time.deltaTime * 8);
-            //this._direction = vector.normalized;
+
+            //float realDeltaAngle = Quaternion.FromToRotation (this._direction,this.tempDirection).eulerAngles.z;
+            //float deltaAngle = realDeltaAngle > 180 ? (360 - realDeltaAngle) : realDeltaAngle;
+            //float rotateSpeed = 1.8f;
+            //if (deltaAngle > Time.fixedDeltaTime*180*rotateSpeed) {
+            //	float tempAngle = Mathf.Atan2 (this._direction.y, this._direction.x);
+            //	tempAngle = tempAngle + ((realDeltaAngle > 180 ? -1 : 1) * Time.fixedDeltaTime * Mathf.PI*rotateSpeed);
+            //	//Debug.Log ("z"+realDeltaAngle+"a"+deltaAngle+"t"+ tempAngle);
+            //	this._direction = new Vector2 (Mathf.Cos (tempAngle), Mathf.Sin (tempAngle));
+            //	//this._direction = (this._direction + (this.tempDirection * Time.deltaTime * 10)).normalized;	
+            //} else {
+            //	this._direction = this.tempDirection.normalized;
+            //}
+            Vector2 vector = this._direction + (this.tempDirection * Time.deltaTime * 10);
+            this._direction = vector.normalized;
             this.size = 1f + (this.length / 1000f);
             transform.position +=  (Vector3) this.direction*Time.deltaTime * 50;
 

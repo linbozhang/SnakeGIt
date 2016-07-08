@@ -13,7 +13,7 @@ namespace SnakeOffline
         public GameObject foodPartPrefab;
 
         List<GameObject> bodyParts = new List<GameObject>();
-
+        List<GameObject> foodParts = new List<GameObject>();
         List<byte> usedIDs = new List<byte>();
         
         void Awake()
@@ -33,7 +33,15 @@ namespace SnakeOffline
             return id;
         }
 
+        private GameObject poolFoodPart(Vector2 pos)
+        {
+            GameObject go = Instantiate<GameObject>(foodPartPrefab);
+            foodParts.Add(go);
+            go.transform.position = pos;
+            go.SetActive(false);
+            return go;
 
+        }
         private GameObject poolBodyPart(Vector2 pos)
         {
             GameObject go=Instantiate<GameObject>(bodyPartPrefab);
@@ -70,17 +78,43 @@ namespace SnakeOffline
 
         }
 
+        public GameObject spawnFoodBody(Vector2 pos)
+        {
+            GameObject go = null;
+            for (int i = 0; i < foodParts.Count; i++)
+            {
+                if (!foodParts[i].activeInHierarchy)
+                {
+                    go = foodParts[i];
+                    go.transform.position = pos;
+                    go.SetActive(true);
+                    return go;
+                }
+            }
+            go = poolFoodPart(pos);
+            go.SetActive(true);
+            return go;
+        }
+
+        public void HideAll()
+        {
+            for (int i = 0; i < bodyParts.Count; i++)
+            {
+                bodyParts[i].SetActive(false);
+            }
+            for (int i = 0; i < foodParts.Count; i++)
+            {
+                foodParts[i].SetActive(false);
+            }
+        }
+
         // Use this for initialization
         void Start()
         {
 
         }
 
-        // Update is called once per frame
-        void Update()
-        {
 
-        }
     }
 }
 

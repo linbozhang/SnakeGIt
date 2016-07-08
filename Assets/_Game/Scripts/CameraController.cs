@@ -26,7 +26,7 @@ namespace SnakeOffline
             {
                 Vector3 pos = followObject.transform.position;
                 pos.z = -10;
-                transform.position = pos ;// Vector3.Lerp(transform.position, pos,Time.deltaTime*2);
+                transform.position =Vector3.Lerp(transform.position, pos,Time.deltaTime*2);
 				mCamera.orthographicSize= startSize*(1+(followObject.length/2000f));   //Mathf.Lerp(mCamera.orthographicSize,startSize*(followObject.length/1000+1),Time.deltaTime*2);
             }
         }

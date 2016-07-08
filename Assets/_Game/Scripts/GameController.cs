@@ -2,6 +2,7 @@
 using System.Collections;
 using Game.UI;
 using DeerCat.SimpleTween;
+using System.Collections.Generic;
 namespace SnakeOffline
 {
     public class GameController : MonoBehaviour
@@ -21,7 +22,7 @@ namespace SnakeOffline
 
         public MenuSystem menuSystem;
 		public MapGenerator mapGenerator;
-
+        public FoodsController foodControl;
 
         private MenuScreen startMenu;
         private MenuScreen restartMenu;
@@ -29,6 +30,7 @@ namespace SnakeOffline
         private DeerCat.SimpleTween.Tween fadeTween;
 
         private GameState state;
+        private List<SnakeController> players;
 
         public static MenuSystem MenuSystem
         {
@@ -39,6 +41,7 @@ namespace SnakeOffline
         {
             get { return current.state; }
         }
+
 
         void Awake()
         {
@@ -82,10 +85,19 @@ namespace SnakeOffline
             Game.SoundManager.PlayMusic("GameLoop");
 			mapGenerator.GeneratorMap ();
             ScreenFaderFadeOut(0.4f);
+            foodControl.InitFoods();
         }
 
         private void OnEnterStateDeath()
         {
+            menuSystem.HUD.Hide();
+            foodControl.ResetFood();
+            PoolManager.current.HideAll();
+            for (int i = 0; i < players.Count; i++)
+            {
+                Destroy(players[i].gameObject);
+            }
+
 
         }
 
@@ -143,7 +155,12 @@ namespace SnakeOffline
             OnEnterStateGame();
         }
         
-
+        public void EnterStateDeath()
+        {
+            OnEnterStateDeath();
+           
+                                    
+        }
 
         // Update is called once per frame
         void Update()
